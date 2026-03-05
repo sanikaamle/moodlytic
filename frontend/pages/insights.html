@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moodlytic — Insights</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/script.js" defer></script>
+</head>
+<body>
+<div class="ambient"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+
+<div class="sidebar">
+  <div class="sidebar-brand"><div class="brand-icon">🌙</div><span class="brand-name">Moodlytic</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <a class="nav-item" href="mood.html"><span class="nav-icon">📊</span> Mood Tracker</a>
+    <a class="nav-item" href="journal.html"><span class="nav-icon">📓</span> Journal <span class="nav-badge">3</span></a>
+    <a class="nav-item active" href="insights.html"><span class="nav-icon">✨</span> Insights</a>
+    <div class="nav-label" style="margin-top:12px;">Support</div>
+    <a class="nav-item" href="resources.html"><span class="nav-icon">🤝</span> Resources</a>
+    <a class="nav-item" href="profile.html"><span class="nav-icon">⚙️</span> Settings</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card"><div class="avatar">S</div><div><div class="user-name">Sarah Johnson</div><div class="user-status">● Feeling Good</div></div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <div>
+      <h1>Emotional Insights ✨</h1>
+      <p>Reflecting on the past so the data leads to a clearer future · 24 Entries</p>
+    </div>
+    <div class="date-filter">
+      <button class="filter-btn">Week</button>
+      <button class="filter-btn active">Month</button>
+      <button class="filter-btn">3M</button>
+      <button class="filter-btn">Year</button>
+    </div>
+  </div>
+
+  <!-- Summary banner -->
+  <div class="summary-banner">
+    <div class="summary-icon">🌟</div>
+    <div class="summary-text">
+      <h3>Your mood has been trending upward! 🎉</h3>
+      <p>Over the past month, you've had <span class="summary-highlight">72% positive days</span>. Your journaling consistency has increased by <span class="summary-highlight">18%</span>, and AI has identified that <span class="summary-highlight">social connection</span> and <span class="summary-highlight">morning routines</span> are your strongest mood boosters.</p>
+    </div>
+  </div>
+
+  <!-- Top stats -->
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Current Streak</div><div class="card-badge badge-green">🔥 Active</div></div>
+      <div style="text-align:center;padding:8px 0;">
+        <div style="font-family:'Sora',sans-serif;font-size:48px;font-weight:700;color:var(--teal);">12</div>
+        <div style="font-size:13px;color:var(--muted);">Days in a row</div>
+        <div style="font-size:12px;color:var(--purple-soft);margin-top:6px;">Personal best: 21 days 🏆</div>
+      </div>
+    </div>
+  </div>
+  <!-- AI + Heatmap -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">AI Observations</div></div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
+        <span style="color:var(--purple-soft);font-weight:600;">The "10 PM Pattern"</span> — Looking at your data, you seem to feel more <span style="color:var(--teal);">rested and focused</span> on days you journal before 10 PM. Keeping this rhythm might help stabilize your morning mood.
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
+        <span style="color:var(--purple-soft);font-weight:600;">Social Energy Correlation</span> — Your "Social Interaction" driver has been rising. This correlates with a <span style="color:var(--teal);">18% increase</span> in your creative output entries. Deep social connections are fueling your inspiration.
+      </div>
+      <button class="pro-badge">✦ Go Pro for full AI analysis</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Monthly Mood Heatmap</div></div>
+      <div class="heatmap-labels">
+        <div class="h-label">M</div><div class="h-label">T</div><div class="h-label">W</div>
+        <div class="h-label">T</div><div class="h-label">F</div><div class="h-label">S</div><div class="h-label">S</div>
+      </div>
+      <div class="heatmap" id="heatmap"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--muted);">
+        <span>Less</span>
+        <div style="width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,0.04);"></div>
+        <div style="width:12px;height:12px;border-radius:3px;background:rgba(124,92,252,0.2);"></div>
+        <div style="width:12px;height:12px;border-radius:3px;background:rgba(124,92,252,0.4);"></div>
+        <div style="width:12px;height:12px;border-radius:3px;background:rgba(56,217,169,0.7);"></div>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Affirmations -->
+  <div style="margin-bottom:8px;font-family:'Sora',sans-serif;font-size:16px;font-weight:600;">Your Personalised Affirmations ✦</div>
+  <div class="affirmation-card">
+    <div class="aff-icon">💜</div>
+    <div>
+      <div class="aff-text">"Your consistency in showing up for yourself this month shows remarkable self-awareness. The 12-day streak is a reflection of how deeply you value your wellbeing."</div>
+      <div class="aff-time">Generated from your Oct patterns · Refresh daily</div>
+    </div>
+  </div>
+  <div class="affirmation-card">
+    <div class="aff-icon">🌟</div>
+    <div>
+      <div class="aff-text">"The mornings you chose to journal before the world got loud became your best days. You've learned something powerful about yourself this month."</div>
+      <div class="aff-time">Based on your morning pattern insights</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Heatmap
+const hm=document.getElementById('heatmap');
+const levels=[0,1,2,3,4];
+for(let i=0;i<35;i++){
+  const c=document.createElement('div');
+  const l=levels[Math.floor(Math.random()*levels.length)];
+  c.className=`heat-cell h${l}`;
+  c.title=`Day ${i+1}: Mood level ${l}`;
+  hm.appendChild(c);
+}
+
+document.querySelectorAll('.filter-btn').forEach(b=>{
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moodlytic — Sign In</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/script.js" defer></script>
+</head>
+
+<body>
+
+<div class="ambient">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="stars" id="stars"></div>
+
+<div class="page">
+
+  <!-- Left panel -->
+  <div class="left-panel">
+    <div class="brand">
+      <div class="brand-icon">🌙</div>
+      <span class="brand-name">Moodlytic</span>
+    </div>
+
+    <div class="left-content">
+      <div class="hero-visual">
+        <div class="hero-circle"></div>
+        <div class="hero-inner">🧘</div>
+      </div>
+
+      <h1>Your safe space to feel, reflect & heal</h1>
+
+      <p>
+      An AI companion that listens without judgment.
+      Track your moods, journal your thoughts,
+      and find calm — anytime you need it.
+      </p>
+
+      <div class="trust-badges">
+        <div class="badge">
+          <div class="badge-dot green"></div>
+          End-to-end encrypted
+        </div>
+
+        <div class="badge">
+          <div class="badge-dot purple"></div>
+          100% private
+        </div>
+
+        <div class="badge">
+          <div class="badge-dot green"></div>
+          AI-powered empathy
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Right panel -->
+  <div class="right-panel">
+
+    <div class="form-box">
+
+      <h2>Welcome back 👋</h2>
+      <p class="form-subtitle">How are you feeling today? Let's check in.</p>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" onclick="switchTab('signin')">Sign In</button>
+        <button class="tab-btn" onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <form onsubmit="handleSubmit(event)">
+
+        <!-- Signup only -->
+        <div class="signup-fields" id="signupFields">
+
+          <div class="form-row">
+
+            <div class="form-group">
+              <label>First Name</label>
+              <div class="input-wrap">
+                <span class="input-icon">✨</span>
+                <input class="form-input" type="text" placeholder="Sarah">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Last Name</label>
+              <div class="input-wrap">
+                <span class="input-icon">✨</span>
+                <input class="form-input" type="text" placeholder="Johnson">
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+          <label>Email address</label>
+
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input class="form-input" type="email" placeholder="you@example.com">
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Password</label>
+
+          <div class="input-wrap">
+            <span class="input-icon">🔐</span>
+            <input class="form-input" type="password" placeholder="••••••••••">
+          </div>
+
+        </div>
+
+
+        <a href="#" class="forgot" id="forgotLink">Forgot password?</a>
+
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          Sign in to Moodlytic
+        </button>
+
+      </form>
+
+
+      <div class="divider">or continue with</div>
+
+
+      <div class="social-btns">
+
+        <button class="social-btn">Google</button>
+
+        <button class="social-btn">GitHub</button>
+
+      </div>
+
+
+      <div class="mood-check">
+
+        <div>Before we begin — how are you feeling?</div>
+
+        <div class="mood-emojis">
+          <span class="mood-emoji">😔</span>
+          <span class="mood-emoji">😢</span>
+          <span class="mood-emoji">😐</span>
+          <span class="mood-emoji">🙂</span>
+          <span class="mood-emoji">😊</span>
+        </div>
+
+      </div>
+
+
+      <p class="privacy-note">
+        By continuing, you agree to our
+        <a href="#">Terms of Service</a>
+        &
+        <a href="#">Privacy Policy</a>.
+        <br>
+        Your conversations are encrypted and never sold.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+
+// stars animation
+const starsEl = document.getElementById('stars');
+
+for(let i=0;i<80;i++){
+
+  const s=document.createElement('div');
+
+  s.className='star';
+
+  const sz=Math.random()*2+1;
+
+  s.style.cssText=`
+  width:${sz}px;
+  height:${sz}px;
+  top:${Math.random()*100}%;
+  left:${Math.random()*100}%;
+  animation-delay:${Math.random()*3}s;
+  animation-duration:${2+Math.random()*3}s;
+  `;
+
+  starsEl.appendChild(s);
+
+}
+
+
+
+let currentTab='signin';
+
+
+function switchTab(tab){
+
+  currentTab=tab;
+
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+
+    b.classList.toggle(
+      'active',
+      (tab==='signin' && i===0) || (tab==='signup' && i===1)
+    );
+
+  });
+
+  const sf=document.getElementById('signupFields');
+
+  const sb=document.getElementById('submitBtn');
+
+  const fl=document.getElementById('forgotLink');
+
+
+  if(tab==='signup'){
+
+    sf.classList.add('show');
+
+    sb.textContent='Create My Account ✦';
+
+    fl.style.display='none';
+
+  }
+
+  else{
+
+    sf.classList.remove('show');
+
+    sb.textContent='Sign in to SereneAI ✦';
+
+    fl.style.display='block';
+
+  }
+
+}
+
+
+
+function handleSubmit(e){
+
+  e.preventDefault();
+
+  const btn=document.getElementById('submitBtn');
+
+  btn.textContent='✦ Entering your safe space...';
+
+  btn.style.background='linear-gradient(135deg,#38d9a9,#4dabf7)';
+
+
+  setTimeout(()=>{
+
+    window.location.href='journal.html';
+
+  },1500);
+
+}
+
+
+
+// mood emoji click
+
+document.querySelectorAll('.mood-emoji').forEach(em=>{
+
+  em.addEventListener('click',function(){
+
+    document.querySelectorAll('.mood-emoji').forEach(e=>e.style.transform='scale(1)');
+
+    this.style.transform='scale(1.4)';
+
+    this.style.filter='drop-shadow(0 0 8px rgba(124,92,252,0.8))';
+
+  });
+
+});
+
+</script>
+
+</body>
+</html>

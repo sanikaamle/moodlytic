@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moodlytic — Profile</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/script.js" defer></script>
+</head>
+
+<body>
+
+<div class="ambient">
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+<div class="sidebar-brand">
+<div class="brand-icon">🌙</div>
+<span class="brand-name">Moodlytic</span>
+</div>
+
+<div class="nav-section">
+
+<div class="nav-label">Main</div>
+
+
+<a class="nav-item" href="mood.html">
+<span class="nav-icon">📊</span> Mood Tracker
+</a>
+
+<a class="nav-item" href="journal.html">
+<span class="nav-icon">📓</span> Journal
+</a>
+
+<a class="nav-item" href="insights.html">
+<span class="nav-icon">✨</span> Insights
+</a>
+
+<div class="nav-label" style="margin-top:12px;">Support</div>
+
+<a class="nav-item" href="resources.html">
+<span class="nav-icon">🤝</span> Resources
+</a>
+
+<a class="nav-item active" href="profile.html">
+<span class="nav-icon">👤</span> Profile
+</a>
+
+</div>
+
+<div class="sidebar-footer">
+<div class="user-card">
+<div class="avatar">S</div>
+<div>
+<div class="user-name">Sarah Johnson</div>
+<div class="user-status">● Feeling Good</div>
+</div>
+</div>
+</div>
+
+</div>
+
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<div class="profile-page">
+
+
+<!-- PROFILE HEADER -->
+<div class="profile-hero">
+
+<div class="profile-avatar">
+S
+<div class="avatar-edit">✏️</div>
+</div>
+
+<div class="profile-info">
+
+<h3>Sarah Johnson</h3>
+<p>sarah@example.com · Member since Jan 2024</p>
+
+<div class="profile-badges">
+<span class="p-badge">🔥 12-day streak</span>
+<span class="p-badge">📓 24 journals</span>
+<span class="p-badge">🌱 Growing</span>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PERSONAL INFORMATION -->
+<div class="settings-section">
+
+<div class="section-header">Personal Information</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>First Name</label>
+<input class="form-input" type="text" value="Sarah">
+</div>
+
+<div class="form-group">
+<label>Last Name</label>
+<input class="form-input" type="text" value="Johnson">
+</div>
+
+<div class="form-group">
+<label>Email</label>
+<input class="form-input" type="email" value="sarah@example.com">
+</div>
+
+<div class="form-group">
+<label>Date of Birth</label>
+<input class="form-input" type="date" value="1995-03-15">
+</div>
+
+<div class="form-group">
+<label>Timezone</label>
+<select class="form-input">
+<option>UTC-5 (Eastern Time)</option>
+<option>UTC-8 (Pacific Time)</option>
+<option>UTC+0 (London)</option>
+<option>UTC+5:30 (India)</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Language</label>
+<select class="form-input">
+<option>English</option>
+<option>Spanish</option>
+<option>French</option>
+</select>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- SAVE BUTTON -->
+<div class="save-bar">
+
+<button class="cancel-btn">
+Cancel
+</button>
+
+<button class="save-btn" onclick="saveProfile()">
+Save Changes ✦
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function saveProfile(){
+
+const btn = event.currentTarget
+
+btn.textContent = "✓ Saved!"
+
+btn.style.background =
+"linear-gradient(135deg,#38d9a9,#4dabf7)"
+
+setTimeout(()=>{
+btn.textContent="Save Changes ✦"
+btn.style.background=""
+},2000)
+
+}
+
+</script>
+
+</body>
+</html>
