@@ -1,5 +1,5 @@
 
-SereneAI Clean Project Structure
+Moodlytic Clean Project Structure
 
 frontend/
   pages/ -> HTML pages
