@@ -1,0 +1,17 @@
+Model Evaluation Notes
+
+Sentence: I feel extremely tired of life
+Prediction: Depression
+Observation: Correct classification
+
+Sentence: I had a wonderful day
+Prediction: Normal
+Observation: Correct classification
+
+Sentence: I don't want to talk to anyone
+Prediction: Anxiety
+Observation: Possible early distress signal
+
+Sentence: I am excited for tomorrow
+Prediction: Normal
+Observation: Correct classificationh
