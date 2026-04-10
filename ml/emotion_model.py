@@ -1,3 +1,5 @@
+import sys
+import json
 from transformers import pipeline
 
 classifier = pipeline(
@@ -6,15 +8,21 @@ classifier = pipeline(
     top_k=None
 )
 
-while True:
-    text = input("\nEnter text (or type 'exit'): ")
-    
-    if text.lower() == "exit":
-        break
-
+def predict_emotions(text):
     results = classifier(text)[0]
     results = sorted(results, key=lambda x: x['score'], reverse=True)
 
-    print("\nTop emotions:")
-    for r in results[:3]:
-        print(f"{r['label']} → {round(r['score'], 3)}")
+    return [
+        {
+            "emotion": r["label"],
+            "confidence": round(r["score"], 3)
+        }
+        for r in results[:3]
+    ]
+
+if __name__ == "__main__":
+    text = sys.argv[1]  # input from Node
+
+    emotions = predict_emotions(text)
+
+    print(json.dumps(emotions)) 
