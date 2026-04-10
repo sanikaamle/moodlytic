@@ -31,7 +31,7 @@ const User = mongoose.model("User", userSchema);
 
 
 app.get("/", (req, res) => {
-  res.send("SereneAI backend running");
+  res.send("Moodlytic backend running");
 });
 
 app.post("/ai-chat", (req, res) => {
@@ -89,6 +89,65 @@ app.post("/analyze", async (req, res) => {
     });
   });
 });
+
+app.get("/dashboard/:username", async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+
+  if (!user) return res.json({});
+
+  const entries = user.entries;
+
+  const total = entries.length;
+
+  const positive = entries.filter(e => e.mood === "positive").length;
+  const negative = entries.filter(e => e.mood === "negative").length;
+
+  const positivePercent = total ? Math.round((positive / total) * 100) : 0;
+
+  res.json({
+    totalEntries: total,
+    positivePercent,
+    negativeCount: negative,
+
+        streak: calculateStreak(entries)
+
+  });
+});
+
+function calculateStreak(entries) {
+  let streak = 0;
+  let today = new Date();
+
+  for (let i = entries.length - 1; i >= 0; i--) {
+    let diff = Math.floor((today - new Date(entries[i].createdAt)) / (1000 * 60 * 60 * 24));
+
+    if (diff === streak) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+app.get("/entries/:username", async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+
+  if (!user) return res.json([]);
+
+  res.json(user.entries);
+});
+
+function generateInsight(mood, emotions) {
+  const top = emotions[0].emotion;
+
+  if (mood === "negative") {
+    return `You seem to be feeling ${top}. Consider taking a break.`;
+  } else {
+    return `You're feeling ${top}. Keep it up!`;
+  }
+}
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");
