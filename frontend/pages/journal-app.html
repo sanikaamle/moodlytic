@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moodlytic — Journal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/app.js" defer></script>
+</head>
+
+<body>
+
+<div class="ambient">
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+</div>
+
+<div class="sidebar">
+<div class="sidebar-brand">
+<div class="brand-icon">🌙</div>
+<span class="brand-name">Moodlytic</span>
+</div>
+
+<div class="nav-section">
+<div class="nav-label">Main</div>
+
+<a class="nav-item" href="dashboard.html">
+<span class="nav-icon">📊</span> Dashboard
+</a>
+
+<a class="nav-item active" href="journal-app.html">
+<span class="nav-icon">📓</span> Journal
+</a>
+
+<a class="nav-item" href="insights.html">
+<span class="nav-icon">✨</span> Insights
+</a>
+
+<div class="nav-label" style="margin-top:12px;">Support</div>
+
+<a class="nav-item" href="resources.html">
+<span class="nav-icon">🤝</span> Resources
+</a>
+
+<a class="nav-item" href="profile.html">
+<span class="nav-icon">⚙️</span> Settings
+</a>
+
+</div>
+
+<div class="sidebar-footer">
+<div class="user-card">
+<div class="avatar">U</div>
+<div>
+<div class="user-name">User</div>
+<div class="user-status">● Ready to journal</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="main">
+
+<div class="journal-list">
+
+<div class="list-header">
+<h2>📓 My Journal</h2>
+
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input class="search-input" type="text" placeholder="Search entries...">
+</div>
+
+</div>
+
+<button class="new-entry-btn" onclick="newEntry()">✦ New Entry</button>
+
+<div class="entries-list">
+<!-- Entries will be loaded dynamically from backend -->
+<div style="
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(232,232,240,0.5);
+  font-size: 14px;
+">
+  Loading your entries... ⏳
+</div>
+</div>
+
+</div>
+
+<div class="editor">
+
+<div class="editor-header">
+
+<div class="editor-meta">
+<span class="editor-date" id="editorDate"></span>
+
+<div class="editor-mood-pick">
+<span class="emk active" title="Happy">😊</span>
+<span class="emk" title="Sad">😢</span>
+<span class="emk" title="Anxious">😰</span>
+<span class="emk" title="Excited">😄</span>
+<span class="emk" title="Grateful">🙏</span>
+</div>
+
+</div>
+
+<div class="editor-actions">
+<button class="editor-btn" id="saveBtn" onclick="saveJournalEntry()">
+💾 Save Entry
+</button>
+</div>
+
+</div>
+
+<input class="title-input" id="entryTitle" type="text" placeholder="Entry title (optional)...">
+
+<div class="divider-line"></div>
+
+<textarea 
+  class="body-input" 
+  id="entryBody" 
+  placeholder="What's on your mind? Write freely... The AI will analyze your emotional state and help you understand your feelings better."
+></textarea>
+
+<div class="word-count" id="wordCount">0 words</div>
+
+<!-- Analysis Result Display -->
+<div id="analysisResult"></div>
+
+</div>
+</div>
+
+<script>
+// Emoji mood selector
+document.querySelectorAll('.emk').forEach(em => {
+  em.addEventListener('click', function() {
+    document.querySelectorAll('.emk').forEach(e => e.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Set current date on load
+document.getElementById('editorDate').textContent = new Date().toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric"
+}) + " · " + new Date().toLocaleTimeString("en-US", {
+  hour: "2-digit",
+  minute: "2-digit"
+});
+</script>
+
+</body>
+</html>

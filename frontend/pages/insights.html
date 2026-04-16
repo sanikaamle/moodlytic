@@ -6,9 +6,8 @@
 <title>Moodlytic — Insights</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-
 <link rel="stylesheet" href="../css/style.css">
-<script src="../js/script.js" defer></script>
+<script src="../js/app.js" defer></script>
 </head>
 <body>
 <div class="ambient"><div class="orb orb1"></div><div class="orb orb2"></div></div>
@@ -17,15 +16,21 @@
   <div class="sidebar-brand"><div class="brand-icon">🌙</div><span class="brand-name">Moodlytic</span></div>
   <div class="nav-section">
     <div class="nav-label">Main</div>
-    <a class="nav-item" href="mood.html"><span class="nav-icon">📊</span> Mood Tracker</a>
-    <a class="nav-item" href="journal.html"><span class="nav-icon">📓</span> Journal <span class="nav-badge">3</span></a>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="journal-app.html"><span class="nav-icon">📓</span> Journal</a>
     <a class="nav-item active" href="insights.html"><span class="nav-icon">✨</span> Insights</a>
     <div class="nav-label" style="margin-top:12px;">Support</div>
     <a class="nav-item" href="resources.html"><span class="nav-icon">🤝</span> Resources</a>
     <a class="nav-item" href="profile.html"><span class="nav-icon">⚙️</span> Settings</a>
   </div>
   <div class="sidebar-footer">
-    <div class="user-card"><div class="avatar">S</div><div><div class="user-name">Sarah Johnson</div><div class="user-status">● Feeling Good</div></div></div>
+    <div class="user-card">
+      <div class="avatar">U</div>
+      <div>
+        <div class="user-name">User</div>
+        <div class="user-status">● Active</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -33,7 +38,7 @@
   <div class="page-header">
     <div>
       <h1>Emotional Insights ✨</h1>
-      <p>Reflecting on the past so the data leads to a clearer future · 24 Entries</p>
+      <p id="insightsSubtitle">Loading your insights...</p>
     </div>
     <div class="date-filter">
       <button class="filter-btn">Week</button>
@@ -44,34 +49,37 @@
   </div>
 
   <!-- Summary banner -->
-  <div class="summary-banner">
-    <div class="summary-icon">🌟</div>
+  <div class="summary-banner" id="summaryBanner">
+    <div class="summary-icon">⏳</div>
     <div class="summary-text">
-      <h3>Your mood has been trending upward! 🎉</h3>
-      <p>Over the past month, you've had <span class="summary-highlight">72% positive days</span>. Your journaling consistency has increased by <span class="summary-highlight">18%</span>, and AI has identified that <span class="summary-highlight">social connection</span> and <span class="summary-highlight">morning routines</span> are your strongest mood boosters.</p>
+      <h3>Analyzing your patterns...</h3>
+      <p>Please wait while we process your mood data.</p>
     </div>
   </div>
 
   <!-- Top stats -->
   <div class="grid-3">
     <div class="card">
-      <div class="card-header"><div class="card-title">Current Streak</div><div class="card-badge badge-green">🔥 Active</div></div>
+      <div class="card-header">
+        <div class="card-title">Current Streak</div>
+        <div class="card-badge badge-green" id="streakBadge">🔥 Active</div>
+      </div>
       <div style="text-align:center;padding:8px 0;">
-        <div style="font-family:'Sora',sans-serif;font-size:48px;font-weight:700;color:var(--teal);">12</div>
+        <div style="font-family:'Sora',sans-serif;font-size:48px;font-weight:700;color:var(--teal);" id="streakNumber">0</div>
         <div style="font-size:13px;color:var(--muted);">Days in a row</div>
-        <div style="font-size:12px;color:var(--purple-soft);margin-top:6px;">Personal best: 21 days 🏆</div>
+        <div style="font-size:12px;color:var(--purple-soft);margin-top:6px;" id="streakBest">Loading...</div>
       </div>
     </div>
   </div>
+
   <!-- AI + Heatmap -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header"><div class="card-title">AI Observations</div></div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
-        <span style="color:var(--purple-soft);font-weight:600;">The "10 PM Pattern"</span> — Looking at your data, you seem to feel more <span style="color:var(--teal);">rested and focused</span> on days you journal before 10 PM. Keeping this rhythm might help stabilize your morning mood.
-      </div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
-        <span style="color:var(--purple-soft);font-weight:600;">Social Energy Correlation</span> — Your "Social Interaction" driver has been rising. This correlates with a <span style="color:var(--teal);">18% increase</span> in your creative output entries. Deep social connections are fueling your inspiration.
+      <div id="aiObservations">
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
+          🔄 Analyzing your patterns...
+        </div>
       </div>
       <button class="pro-badge">✦ Go Pro for full AI analysis</button>
     </div>
@@ -84,52 +92,471 @@
       </div>
       <div class="heatmap" id="heatmap"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--muted);">
-        <span>Less</span>
-        <div style="width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,0.04);"></div>
-        <div style="width:12px;height:12px;border-radius:3px;background:rgba(124,92,252,0.2);"></div>
-        <div style="width:12px;height:12px;border-radius:3px;background:rgba(124,92,252,0.4);"></div>
-        <div style="width:12px;height:12px;border-radius:3px;background:rgba(56,217,169,0.7);"></div>
-        <span>More</span>
+        <span>Negative</span>
+        <div style="width:12px;height:12px;border-radius:3px;background:#ff6b6b;"></div>
+        <div style="width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,0.1);"></div>
+        <div style="width:12px;height:12px;border-radius:3px;background:#38d9a9;"></div>
+        <span>Positive</span>
       </div>
     </div>
   </div>
 
   <!-- AI Affirmations -->
   <div style="margin-bottom:8px;font-family:'Sora',sans-serif;font-size:16px;font-weight:600;">Your Personalised Affirmations ✦</div>
-  <div class="affirmation-card">
-    <div class="aff-icon">💜</div>
-    <div>
-      <div class="aff-text">"Your consistency in showing up for yourself this month shows remarkable self-awareness. The 12-day streak is a reflection of how deeply you value your wellbeing."</div>
-      <div class="aff-time">Generated from your Oct patterns · Refresh daily</div>
-    </div>
-  </div>
-  <div class="affirmation-card">
-    <div class="aff-icon">🌟</div>
-    <div>
-      <div class="aff-text">"The mornings you chose to journal before the world got loud became your best days. You've learned something powerful about yourself this month."</div>
-      <div class="aff-time">Based on your morning pattern insights</div>
+  <div id="affirmationsContainer">
+    <div class="affirmation-card">
+      <div class="aff-icon">💜</div>
+      <div>
+        <div class="aff-text">Loading your personalized affirmations...</div>
+        <div class="aff-time">Based on your journal patterns</div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-// Heatmap
-const hm=document.getElementById('heatmap');
-const levels=[0,1,2,3,4];
-for(let i=0;i<35;i++){
-  const c=document.createElement('div');
-  const l=levels[Math.floor(Math.random()*levels.length)];
-  c.className=`heat-cell h${l}`;
-  c.title=`Day ${i+1}: Mood level ${l}`;
-  hm.appendChild(c);
+// ============================================
+// INSIGHTS PAGE - LOAD REAL DATA
+// ============================================
+
+async function loadInsightsPage() {
+  try {
+    const username = getUsername();
+    
+    // Fetch data
+    const statsResponse = await fetch(`http://localhost:5000/dashboard/${username}`);
+    const stats = await statsResponse.json();
+    
+    const entriesResponse = await fetch(`http://localhost:5000/entries/${username}`);
+    const entries = await entriesResponse.json();
+    
+    // Update all sections
+    updateInsightsHeader(stats, entries);
+    updateSummaryBanner(stats, entries);
+    updateStreakCard(stats, entries);
+    updateAIObservations(entries, stats);
+    updateInsightsHeatmap(entries);
+    updateAffirmations(entries, stats);
+    
+  } catch (error) {
+    console.error("Error loading insights:", error);
+    document.getElementById('insightsSubtitle').textContent = "Unable to load insights. Please check your connection.";
+  }
 }
 
-document.querySelectorAll('.filter-btn').forEach(b=>{
-  b.addEventListener('click',function(){
-    document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
-    this.classList.add('active');
+// ============================================
+// UPDATE INSIGHTS HEADER
+// ============================================
+
+function updateInsightsHeader(stats, entries) {
+  const subtitle = document.getElementById('insightsSubtitle');
+  const total = stats.totalEntries || 0;
+  const username = getUsername();
+  
+  subtitle.textContent = `Reflecting on the past so the data leads to a clearer future · ${total} Entries`;
+}
+
+// ============================================
+// UPDATE SUMMARY BANNER
+// ============================================
+
+function updateSummaryBanner(stats, entries) {
+  const banner = document.getElementById('summaryBanner');
+  
+  const positivePercent = stats.positivePercent || 0;
+  const total = stats.totalEntries || 0;
+  
+  if (total === 0) {
+    banner.innerHTML = `
+      <div class="summary-icon">🌱</div>
+      <div class="summary-text">
+        <h3>Start Your Journey! 🎉</h3>
+        <p>You haven't journaled yet. Start writing to unlock insights about your emotional patterns and mood trends!</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Determine trend
+  let trendEmoji = "📊";
+  let trendText = "staying stable";
+  
+  if (positivePercent >= 70) {
+    trendEmoji = "🎉";
+    trendText = "trending upward";
+  } else if (positivePercent >= 50) {
+    trendEmoji = "😊";
+    trendText = "mostly positive";
+  } else if (positivePercent >= 30) {
+    trendEmoji = "😐";
+    trendText = "balanced";
+  } else {
+    trendEmoji = "💙";
+    trendText = "going through challenges";
+  }
+  
+  // Find common emotions
+  const emotionCounts = {};
+  entries.forEach(entry => {
+    entry.emotions.forEach(emotion => {
+      emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+    });
+  });
+  
+  const topEmotions = Object.entries(emotionCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([emotion, count]) => emotion);
+  
+  const emotionText = topEmotions.length > 0 
+    ? `<span class="summary-highlight">${topEmotions[0]}</span>` + 
+      (topEmotions[1] ? ` and <span class="summary-highlight">${topEmotions[1]}</span>` : '')
+    : '<span class="summary-highlight">various emotions</span>';
+  
+  banner.innerHTML = `
+    <div class="summary-icon">${trendEmoji}</div>
+    <div class="summary-text">
+      <h3>Your mood has been ${trendText}! ${trendEmoji}</h3>
+      <p>Over the past month, you've had <span class="summary-highlight">${positivePercent}% positive days</span>. 
+      You've logged <span class="summary-highlight">${total} entries</span>, with ${emotionText} being your most frequent emotions. 
+      ${stats.streak > 0 ? `You're on a <span class="summary-highlight">${stats.streak}-day streak</span>! 🔥` : 'Start journaling daily to build a streak!'}</p>
+    </div>
+  `;
+}
+
+// ============================================
+// UPDATE STREAK CARD
+// ============================================
+
+function updateStreakCard(stats, entries) {
+  const streakNum = document.getElementById('streakNumber');
+  const streakBadge = document.getElementById('streakBadge');
+  const streakBest = document.getElementById('streakBest');
+  
+  const streak = stats.streak || 0;
+  
+  streakNum.textContent = streak;
+  
+  if (streak === 0) {
+    streakBadge.innerHTML = '💤 Inactive';
+    streakBadge.className = 'card-badge';
+  } else if (streak >= 7) {
+    streakBadge.innerHTML = '🔥 On Fire!';
+    streakBadge.className = 'card-badge badge-green';
+  } else {
+    streakBadge.innerHTML = '🔥 Active';
+    streakBadge.className = 'card-badge badge-green';
+  }
+  
+  // Calculate personal best (all time highest streak)
+  const personalBest = calculatePersonalBest(entries);
+  
+  if (personalBest > streak) {
+    streakBest.textContent = `Personal best: ${personalBest} days 🏆`;
+  } else if (streak > 0) {
+    streakBest.textContent = `New personal record! 🎉`;
+  } else {
+    streakBest.textContent = `Start journaling to build a streak!`;
+  }
+}
+
+function calculatePersonalBest(entries) {
+  if (entries.length === 0) return 0;
+  
+  let maxStreak = 0;
+  let currentStreak = 1;
+  
+  const sortedEntries = [...entries].sort((a, b) => 
+    new Date(a.createdAt) - new Date(b.createdAt)
+  );
+  
+  for (let i = 1; i < sortedEntries.length; i++) {
+    const prevDate = new Date(sortedEntries[i - 1].createdAt);
+    const currDate = new Date(sortedEntries[i].createdAt);
+    
+    const dayDiff = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
+    
+    if (dayDiff === 1) {
+      currentStreak++;
+    } else {
+      maxStreak = Math.max(maxStreak, currentStreak);
+      currentStreak = 1;
+    }
+  }
+  
+  return Math.max(maxStreak, currentStreak);
+}
+
+// ============================================
+// UPDATE AI OBSERVATIONS
+// ============================================
+
+function updateAIObservations(entries, stats) {
+  const container = document.getElementById('aiObservations');
+  
+  if (entries.length === 0) {
+    container.innerHTML = `
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
+        Start journaling to unlock AI-powered insights about your emotional patterns!
+      </div>
+    `;
+    return;
+  }
+  
+  const observations = generateAIObservations(entries, stats);
+  
+  container.innerHTML = observations.map(obs => `
+    <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
+      <span style="color:var(--purple-soft);font-weight:600;">${obs.title}</span> — ${obs.text}
+    </div>
+  `).join('');
+}
+
+function generateAIObservations(entries, stats) {
+  const observations = [];
+  
+  // Most common emotion pattern
+  const emotionCounts = {};
+  entries.forEach(entry => {
+    entry.emotions.forEach(emotion => {
+      emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+    });
+  });
+  
+  const topEmotion = Object.entries(emotionCounts)
+    .sort((a, b) => b[1] - a[1])[0];
+  
+  if (topEmotion) {
+    const [emotion, count] = topEmotion;
+    const percentage = Math.round((count / entries.length) * 100);
+    
+    observations.push({
+      title: `"${emotion.charAt(0).toUpperCase() + emotion.slice(1)}" Dominance`,
+      text: `Your most frequent emotion is <span style="color:var(--teal);">${emotion}</span>, appearing in ${percentage}% of your entries. This suggests a consistent emotional baseline.`
+    });
+  }
+  
+  // Time pattern analysis
+  const morningEntries = entries.filter(e => {
+    const hour = new Date(e.createdAt).getHours();
+    return hour >= 5 && hour < 12;
+  });
+  
+  const eveningEntries = entries.filter(e => {
+    const hour = new Date(e.createdAt).getHours();
+    return hour >= 18 && hour < 23;
+  });
+  
+  if (morningEntries.length > eveningEntries.length && morningEntries.length > 3) {
+    observations.push({
+      title: 'Morning Journaling Habit',
+      text: `You tend to journal more in the <span style="color:var(--teal);">morning hours</span>. Morning journaling can help set a positive tone for the day and improve mental clarity.`
+    });
+  } else if (eveningEntries.length > morningEntries.length && eveningEntries.length > 3) {
+    observations.push({
+      title: 'Evening Reflection Pattern',
+      text: `You prefer to journal in the <span style="color:var(--teal);">evening</span>. Evening journaling is great for processing the day's events and promoting better sleep.`
+    });
+  }
+  
+  // Mood consistency
+  if (stats.positivePercent >= 70) {
+    observations.push({
+      title: 'Positive Momentum',
+      text: `Your <span style="color:var(--teal);">${stats.positivePercent}% positive rate</span> shows strong emotional resilience. Continue practicing what brings you joy!`
+    });
+  } else if (stats.positivePercent < 40 && entries.length > 5) {
+    observations.push({
+      title: 'Growth Opportunity',
+      text: `Recent entries show some challenges. Remember that journaling itself is a powerful tool for processing difficult emotions. Consider the grounding exercises in Resources.`
+    });
+  }
+  
+  // Fallback if not enough observations
+  if (observations.length < 2) {
+    observations.push({
+      title: 'Building Patterns',
+      text: `Keep journaling to unlock deeper insights! With more entries, we'll identify your unique emotional patterns and triggers.`
+    });
+  }
+  
+  return observations.slice(0, 3); // Max 3 observations
+}
+
+// ============================================
+// UPDATE HEATMAP (Real Data)
+// ============================================
+
+function updateInsightsHeatmap(entries) {
+  const heatmap = document.getElementById('heatmap');
+  heatmap.innerHTML = '';
+  
+  // Create map of dates to moods
+  const moodMap = {};
+  entries.forEach(entry => {
+    const date = new Date(entry.createdAt).toDateString();
+    moodMap[date] = entry.mood;
+  });
+  
+  // Generate last 35 days
+  const today = new Date();
+  for (let i = 34; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toDateString();
+    
+    const mood = moodMap[dateStr];
+    
+    let className = 'heat-cell';
+    if (mood === 'positive') className += ' h-positive';
+    else if (mood === 'negative') className += ' h-negative';
+    else if (mood === 'neutral') className += ' h-neutral';
+    else className += ' h0';
+    
+    const cell = document.createElement('div');
+    cell.className = className;
+    cell.title = `${date.toLocaleDateString()}: ${mood || 'No entry'}`;
+    
+    heatmap.appendChild(cell);
+  }
+}
+
+// ============================================
+// UPDATE AFFIRMATIONS
+// ============================================
+
+function updateAffirmations(entries, stats) {
+  const container = document.getElementById('affirmationsContainer');
+  
+  if (entries.length === 0) {
+    container.innerHTML = `
+      <div class="affirmation-card">
+        <div class="aff-icon">🌱</div>
+        <div>
+          <div class="aff-text">"Every journey begins with a single step. Start journaling today to unlock personalized affirmations based on your unique emotional patterns."</div>
+          <div class="aff-time">Your first entry awaits!</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const affirmations = generateAffirmations(entries, stats);
+  
+  container.innerHTML = affirmations.map((aff, i) => `
+    <div class="affirmation-card">
+      <div class="aff-icon">${aff.icon}</div>
+      <div>
+        <div class="aff-text">"${aff.text}"</div>
+        <div class="aff-time">${aff.subtitle}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function generateAffirmations(entries, stats) {
+  const affirmations = [];
+  
+  // Streak affirmation
+  if (stats.streak >= 7) {
+    affirmations.push({
+      icon: '🔥',
+      text: `Your ${stats.streak}-day streak shows remarkable dedication to your wellbeing. Every entry is a step toward deeper self-awareness and emotional growth.`,
+      subtitle: `Based on your ${stats.streak}-day journaling streak`
+    });
+  } else if (stats.streak >= 3) {
+    affirmations.push({
+      icon: '💜',
+      text: `You've shown up for yourself ${stats.streak} days in a row. This consistency is building a foundation for lasting emotional wellness.`,
+      subtitle: `Generated from your recent commitment`
+    });
+  } else if (entries.length >= 5) {
+    affirmations.push({
+      icon: '🌟',
+      text: `You've created ${entries.length} journal entries. Each one is a moment of courage, a choice to understand yourself better.`,
+      subtitle: `Celebrating your journaling journey`
+    });
+  }
+  
+  // Positive emotion affirmation
+  if (stats.positivePercent >= 60) {
+    affirmations.push({
+      icon: '✨',
+      text: `Your entries radiate positivity—${stats.positivePercent}% of your days shine with good energy. You're cultivating joy in your daily life.`,
+      subtitle: `Based on your positive mood patterns`
+    });
+  }
+  
+  // Growth affirmation
+  const recentEntries = entries.slice(-5);
+  const recentPositive = recentEntries.filter(e => e.mood === 'positive').length;
+  
+  if (recentPositive >= 3) {
+    affirmations.push({
+      icon: '🌈',
+      text: `Your recent entries show a beautiful upward trend. You're actively creating the emotional landscape you want to live in.`,
+      subtitle: `Reflecting on your recent positive shifts`
+    });
+  }
+  
+  // General encouragement
+  affirmations.push({
+    icon: '💙',
+    text: `The act of journaling itself is an act of self-love. Every time you write, you're honoring your emotions and creating space for healing.`,
+    subtitle: `A reminder of your courage`
+  });
+  
+  return affirmations.slice(0, 2); // Return max 2 affirmations
+}
+
+// ============================================
+// LOAD ON PAGE LOAD
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadInsightsPage();
+  
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+    });
   });
 });
 </script>
+
+<style>
+/* Heatmap styles */
+.heat-cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  transition: all 0.2s;
+}
+
+.heat-cell:hover {
+  transform: scale(1.2);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.h-positive {
+  background: #38d9a9 !important;
+}
+
+.h-negative {
+  background: #ff6b6b !important;
+}
+
+.h-neutral {
+  background: rgba(255,255,255,0.15) !important;
+}
+
+.h0 {
+  background: rgba(255,255,255,0.02) !important;
+}
+</style>
+
 </body>
 </html>

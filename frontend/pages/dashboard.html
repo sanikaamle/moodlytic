@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moodlytic — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/app.js" defer></script>
+</head>
+<body>
+<div class="ambient"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">🌙</div>
+    <span class="brand-name">Moodlytic</span>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <a class="nav-item active" href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="journal-app.html"><span class="nav-icon">📓</span> Journal</a>
+    <a class="nav-item" href="insights.html"><span class="nav-icon">✨</span> Insights</a>
+    <div class="nav-label" style="margin-top:12px;">Support</div>
+    <a class="nav-item" href="resources.html"><span class="nav-icon">🤝</span> Resources</a>
+    <a class="nav-item" href="profile.html"><span class="nav-icon">⚙️</span> Settings</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">U</div>
+      <div>
+        <div class="user-name">User</div>
+        <div class="user-status">● Active</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main" id="dashboardContent">
+  <div class="page-header">
+    <h1>Dashboard 📊</h1>
+    <p>Track your emotional wellbeing over time · <span id="currentDate"></span></p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-num green-num" id="streakNum">0</div>
+      <div class="stat-label">Day Streak</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">😊</div>
+      <div class="stat-num purple-num" id="positiveNum">0%</div>
+      <div class="stat-label">Positive Days</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📝</div>
+      <div class="stat-num" style="color:var(--blue);" id="totalNum">0</div>
+      <div class="stat-label">Total Entries</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🌱</div>
+      <div class="stat-num green-num" id="trendNum">--</div>
+      <div class="stat-label">Mood Trend</div>
+    </div>
+  </div>
+
+  <!-- This Week Overview -->
+  <div class="section-header">
+    <div class="section-title">Recent Activity</div>
+  </div>
+  <div class="week-row" id="weekOverview">
+    <!-- Will be populated dynamically -->
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Mood Trends</div>
+        <div class="chart-tabs">
+          <div class="chart-tab active">Last 7 Days</div>
+        </div>
+      </div>
+      <div style="position: relative; height: 200px; padding: 20px 10px;">
+        <canvas id="moodTrendChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header"><div class="chart-title">Mood Breakdown</div></div>
+      <div style="position: relative; height: 200px; padding: 20px;">
+        <canvas id="moodBreakdownChart"></canvas>
+      </div>
+      <div id="moodLegend" style="margin-top: 20px; font-size: 12px;"></div>
+    </div>
+  </div>
+
+  <!-- Heatmap -->
+  <div class="card" style="margin-top: 20px;">
+    <div class="card-header"><div class="card-title">Monthly Mood Heatmap</div></div>
+    <div class="heatmap-labels">
+      <div class="h-label">M</div><div class="h-label">T</div><div class="h-label">W</div>
+      <div class="h-label">T</div><div class="h-label">F</div><div class="h-label">S</div><div class="h-label">S</div>
+    </div>
+    <div class="heatmap" id="heatmap"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--muted);">
+      <span>Negative</span>
+      <div style="width:12px;height:12px;border-radius:3px;background:#ff6b6b;"></div>
+      <div style="width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,0.1);"></div>
+      <div style="width:12px;height:12px;border-radius:3px;background:#38d9a9;"></div>
+      <span>Positive</span>
+    </div>
+  </div>
+
+  <!-- Recent Entries -->
+  <div class="section-header" style="margin-top: 30px;">
+    <div class="section-title">Recent Journal Entries</div>
+  </div>
+  <div id="recentEntries"></div>
+
+</div>
+
+<script>
+// Set current date
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString("en-US", {
+  weekday: 'long',
+  month: 'short',
+  day: 'numeric'
+});
+
+let moodTrendChart = null;
+let moodBreakdownChart = null;
+
+// ============================================
+// LOAD DASHBOARD DATA
+// ============================================
+
+async function loadDashboardData() {
+  try {
+    const username = getUsername();
+    
+    // Fetch dashboard stats
+    const statsResponse = await fetch(`http://localhost:5000/dashboard/${username}`);
+    const stats = await statsResponse.json();
+    
+    // Fetch all entries
+    const entriesResponse = await fetch(`http://localhost:5000/entries/${username}`);
+    const entries = await entriesResponse.json();
+    
+    // Update UI
+    updateStats(stats);
+    updateWeekOverview(entries);
+    updateMoodTrendChart(entries);
+    updateMoodBreakdownChart(entries);
+    updateHeatmap(entries);
+    updateRecentEntries(entries);
+    
+  } catch (error) {
+    console.error("Error loading dashboard:", error);
+  }
+}
+
+// ============================================
+// UPDATE STATS
+// ============================================
+
+function updateStats(stats) {
+  document.getElementById('streakNum').textContent = stats.streak || 0;
+  document.getElementById('positiveNum').textContent = (stats.positivePercent || 0) + '%';
+  document.getElementById('totalNum').textContent = stats.totalEntries || 0;
+  
+  // Calculate trend
+  const trend = stats.positivePercent >= 50 ? '↑' : '↓';
+  document.getElementById('trendNum').textContent = trend + (stats.positivePercent || 0) + '%';
+}
+
+// ============================================
+// UPDATE WEEK OVERVIEW
+// ============================================
+
+function updateWeekOverview(entries) {
+  const container = document.getElementById('weekOverview');
+  
+  if (entries.length === 0) {
+    container.innerHTML = '<div style="color: rgba(232,232,240,0.5); text-align: center; padding: 20px;">No entries yet. Start journaling!</div>';
+    return;
+  }
+  
+  // Get last 7 days of entries
+  const last7Days = entries.slice(-7);
+  
+  const moodEmoji = {
+    positive: '😊',
+    negative: '😢',
+    neutral: '😐'
+  };
+  
+  container.innerHTML = last7Days.map(entry => {
+    const date = new Date(entry.createdAt);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+    const dayDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    
+    return `
+      <div class="day-card">
+        <div class="day-name">${dayName}</div>
+        <div class="day-emoji">${moodEmoji[entry.mood] || '😐'}</div>
+        <div class="day-date">${dayDate}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================
+// UPDATE MOOD TREND CHART
+// ============================================
+
+function updateMoodTrendChart(entries) {
+  const ctx = document.getElementById('moodTrendChart');
+  
+  if (!ctx) return;
+  
+  // Destroy previous chart
+  if (moodTrendChart) {
+    moodTrendChart.destroy();
+  }
+  
+  // Get last 7 days
+  const last7Days = entries.slice(-7);
+  
+  // Convert mood to numeric value
+  const moodToValue = {
+    positive: 3,
+    neutral: 2,
+    negative: 1
+  };
+  
+  const labels = last7Days.map(entry => {
+    const date = new Date(entry.createdAt);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  });
+  
+  const data = last7Days.map(entry => moodToValue[entry.mood] || 2);
+  
+  moodTrendChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Mood Level',
+        data: data,
+        borderColor: '#7c5cfc',
+        backgroundColor: 'rgba(124, 92, 252, 0.1)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#7c5cfc',
+        pointBorderColor: '#0a0b14',
+        pointBorderWidth: 2,
+        pointRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          min: 0,
+          max: 4,
+          ticks: {
+            stepSize: 1,
+            callback: function(value) {
+              const labels = ['', 'Negative', 'Neutral', 'Positive', ''];
+              return labels[value];
+            },
+            color: 'rgba(232, 232, 240, 0.5)'
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)'
+          }
+        },
+        x: {
+          ticks: {
+            color: 'rgba(232, 232, 240, 0.5)'
+          },
+          grid: {
+            display: false
+          }
+        }
+      }
+    }
+  });
+}
+
+// ============================================
+// UPDATE MOOD BREAKDOWN CHART
+// ============================================
+
+function updateMoodBreakdownChart(entries) {
+  const ctx = document.getElementById('moodBreakdownChart');
+  
+  if (!ctx) return;
+  
+  // Destroy previous chart
+  if (moodBreakdownChart) {
+    moodBreakdownChart.destroy();
+  }
+  
+  // Count moods
+  const moodCounts = {
+    positive: 0,
+    neutral: 0,
+    negative: 0
+  };
+  
+  entries.forEach(entry => {
+    moodCounts[entry.mood] = (moodCounts[entry.mood] || 0) + 1;
+  });
+  
+  const total = entries.length || 1;
+  
+  moodBreakdownChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Positive', 'Neutral', 'Negative'],
+      datasets: [{
+        data: [
+          moodCounts.positive,
+          moodCounts.neutral,
+          moodCounts.negative
+        ],
+        backgroundColor: [
+          '#38d9a9',
+          '#4dabf7',
+          '#ff6b6b'
+        ],
+        borderColor: '#0a0b14',
+        borderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+  
+  // Update legend
+  const legendHTML = `
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #38d9a9;"></div>
+          <span style="color: rgba(232,232,240,0.8);">Positive</span>
+        </div>
+        <span style="color: rgba(232,232,240,0.6);">${Math.round((moodCounts.positive / total) * 100)}%</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #4dabf7;"></div>
+          <span style="color: rgba(232,232,240,0.8);">Neutral</span>
+        </div>
+        <span style="color: rgba(232,232,240,0.6);">${Math.round((moodCounts.neutral / total) * 100)}%</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff6b6b;"></div>
+          <span style="color: rgba(232,232,240,0.8);">Negative</span>
+        </div>
+        <span style="color: rgba(232,232,240,0.6);">${Math.round((moodCounts.negative / total) * 100)}%</span>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('moodLegend').innerHTML = legendHTML;
+}
+
+// ============================================
+// UPDATE HEATMAP
+// ============================================
+
+function updateHeatmap(entries) {
+  const heatmap = document.getElementById('heatmap');
+  
+  if (!heatmap) return;
+  
+  heatmap.innerHTML = '';
+  
+  // Create map of dates to moods
+  const moodMap = {};
+  entries.forEach(entry => {
+    const date = new Date(entry.createdAt).toDateString();
+    moodMap[date] = entry.mood;
+  });
+  
+  // Generate last 35 days
+  const today = new Date();
+  for (let i = 34; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toDateString();
+    
+    const mood = moodMap[dateStr];
+    
+    let className = 'heat-cell';
+    if (mood === 'positive') className += ' h-positive';
+    else if (mood === 'negative') className += ' h-negative';
+    else if (mood === 'neutral') className += ' h-neutral';
+    else className += ' h0';
+    
+    const cell = document.createElement('div');
+    cell.className = className;
+    cell.title = `${date.toLocaleDateString()}: ${mood || 'No entry'}`;
+    
+    heatmap.appendChild(cell);
+  }
+}
+
+// ============================================
+// UPDATE RECENT ENTRIES
+// ============================================
+
+function updateRecentEntries(entries) {
+  const container = document.getElementById('recentEntries');
+  
+  if (!container) return;
+  
+  const recent = entries.slice(-5).reverse();
+  
+  if (recent.length === 0) {
+    container.innerHTML = '<div style="color: rgba(232,232,240,0.5); text-align: center; padding: 20px;">No entries yet</div>';
+    return;
+  }
+  
+  const moodEmoji = {
+    positive: '😊',
+    negative: '😢',
+    neutral: '😐'
+  };
+  
+  const moodColor = {
+    positive: '#38d9a9',
+    negative: '#ff6b6b',
+    neutral: '#4dabf7'
+  };
+  
+  container.innerHTML = recent.map(entry => {
+    const date = new Date(entry.createdAt);
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    return `
+      <div style="
+        padding: 16px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        margin-bottom: 12px;
+      ">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 12px; color: rgba(232,232,240,0.5);">${formattedDate}</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 20px;">${moodEmoji[entry.mood]}</span>
+            <span style="
+              padding: 4px 12px;
+              background: ${moodColor[entry.mood]}22;
+              color: ${moodColor[entry.mood]};
+              border-radius: 20px;
+              font-size: 11px;
+              text-transform: capitalize;
+            ">${entry.mood}</span>
+          </div>
+        </div>
+        <div style="color: rgba(232,232,240,0.8); font-size: 14px; line-height: 1.5;">
+          ${entry.text.substring(0, 150)}${entry.text.length > 150 ? '...' : ''}
+        </div>
+        <div style="font-size: 11px; color: rgba(232,232,240,0.4); margin-top: 8px;">
+          Emotions: ${entry.emotions.map(e => e.charAt(0).toUpperCase() + e.slice(1)).join(', ')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Load dashboard on page load
+document.addEventListener('DOMContentLoaded', () => {
+  loadDashboardData();
+});
+</script>
+
+<style>
+.heat-cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+}
+
+.h-positive {
+  background: #38d9a9 !important;
+}
+
+.h-negative {
+  background: #ff6b6b !important;
+}
+
+.h-neutral {
+  background: rgba(255,255,255,0.15) !important;
+}
+
+.h0 {
+  background: rgba(255,255,255,0.02) !important;
+}
+</style>
+
+</body>
+</html>
