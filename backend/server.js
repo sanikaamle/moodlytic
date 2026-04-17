@@ -12,10 +12,12 @@ mongoose.connect("mongodb://127.0.0.1:27017/moodlytic")
 .catch(err => console.log(err));
 
 
+// FIXED SCHEMA - Added title field
 const userSchema = new mongoose.Schema({
   username: String,
   entries: [
     {
+      title: String,  // ✅ ADDED
       text: String,
       mood: String,
       emotions: [String],
@@ -41,8 +43,9 @@ app.post("/ai-chat", (req, res) => {
 
 const { exec } = require("child_process");
 
+// FIXED ANALYZE ENDPOINT - Now accepts title
 app.post("/analyze", async (req, res) => {
-  const { text, username } = req.body;
+  const { text, title, username } = req.body;  // ✅ ADDED title
 
   if (!text) {
     return res.status(400).send("No text provided");
@@ -75,7 +78,9 @@ app.post("/analyze", async (req, res) => {
       user = new User({ username, entries: [] });
     }
 
+    // ✅ FIXED - Now saves title too
     user.entries.push({
+      title: title || "Untitled Entry",  // Use title or default
       text,
       mood,
       emotions: emotions.map(e => e.emotion)
@@ -108,24 +113,39 @@ app.get("/dashboard/:username", async (req, res) => {
     totalEntries: total,
     positivePercent,
     negativeCount: negative,
-
-        streak: calculateStreak(entries)
-
+    streak: calculateStreak(entries)
   });
 });
 
 function calculateStreak(entries) {
+  if (entries.length === 0) return 0;
+
+  // Sort entries by date (newest first)
+  const sortedEntries = [...entries].sort((a, b) => 
+    new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
   let streak = 0;
-  let today = new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset to start of day
 
-  for (let i = entries.length - 1; i >= 0; i--) {
-    let diff = Math.floor((today - new Date(entries[i].createdAt)) / (1000 * 60 * 60 * 24));
+  // Check each consecutive day
+  for (let i = 0; i < sortedEntries.length; i++) {
+    const entryDate = new Date(sortedEntries[i].createdAt);
+    entryDate.setHours(0, 0, 0, 0);
 
-    if (diff === streak) {
+    const expectedDate = new Date(today);
+    expectedDate.setDate(today.getDate() - streak);
+
+    const daysDiff = Math.floor((expectedDate - entryDate) / (1000 * 60 * 60 * 24));
+
+    if (daysDiff === 0) {
       streak++;
-    } else {
+    } else if (daysDiff > 0) {
+      // Gap in streak
       break;
     }
+    // Skip duplicate entries on same day
   }
 
   return streak;

@@ -1,13 +1,4 @@
-// ============================================
-// MOODLYTIC - Complete Application Logic
-// Original script.js + Backend Integration
-// ============================================
-
 const API_BASE = "http://localhost:5000";
-
-// ============================================
-// USERNAME MANAGEMENT
-// ============================================
 
 function getUsername() {
   let username = localStorage.getItem("moodlytic_username");
@@ -35,11 +26,8 @@ function clearUsername() {
   location.reload();
 }
 
-// ============================================
-// API CALLS
-// ============================================
 
-// Analyze journal entry
+
 async function analyzeEntry(text) {
   const username = getUsername();
   
@@ -99,9 +87,7 @@ async function getAllEntries() {
   }
 }
 
-// ============================================
-// JOURNAL PAGE FUNCTIONS
-// ============================================
+
 
 async function saveJournalEntry() {
   const titleInput = document.getElementById("entryTitle");
@@ -224,66 +210,109 @@ function displayAnalysisResult(result, container) {
   `;
 }
 
-// ============================================
-// LOAD ENTRIES LIST
-// ============================================
-
 async function loadEntriesList() {
   const entriesContainer = document.querySelector(".entries-list");
-  
   if (!entriesContainer) return;
-  
-  const entries = await getAllEntries();
-  
-  if (entries.length === 0) {
-    entriesContainer.innerHTML = `
-      <div style="
-        text-align: center;
-        padding: 40px 20px;
-        color: rgba(232,232,240,0.5);
-        font-size: 14px;
-      ">
-        No entries yet. Start journaling! ✨
-      </div>
-    `;
-    return;
-  }
-  
-  entriesContainer.innerHTML = entries.map((entry, index) => {
-    const date = new Date(entry.createdAt);
-    const formattedDate = date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric"
-    }) + " · " + date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-    
+
+  try {
+    const entries = await getAllEntries();
+
+    console.log("📦 Loaded entries:", entries);
+
+    if (!entries || entries.length === 0) {
+      entriesContainer.innerHTML = `
+        <div style="
+          text-align: center;
+          padding: 40px 20px;
+          color: rgba(232,232,240,0.5);
+          font-size: 14px;
+        ">
+          No entries yet. Start journaling! ✨
+        </div>
+      `;
+      return;
+    }
+
     const moodEmoji = {
       positive: "😊",
       negative: "😢",
       neutral: "😐"
     };
-    
-    return `
-      <div class="entry-card" onclick="loadEntryContent(${index})">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="entry-date">${formattedDate}</div>
-          <div style="font-size: 18px;">${moodEmoji[entry.mood]}</div>
+
+    entriesContainer.innerHTML = entries.map((entry, index) => {
+
+      // 🛡️ Safe date handling
+      let formattedDate = "Unknown date";
+      if (entry.createdAt) {
+        const date = new Date(entry.createdAt);
+        formattedDate =
+          date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          }) +
+          " · " +
+          date.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+      }
+
+      // 🛡️ Safe title/text
+      const displayText = entry.title || entry.text || "Untitled Entry";
+
+      // 🛡️ Safe emotions (handles object, string, or missing)
+      const emotions = (entry.emotions || [])
+        .slice(0, 3)
+        .map(e => {
+          const val = e?.emotion || e || "";
+          return val.charAt(0).toUpperCase() + val.slice(1);
+        })
+        .join(", ");
+
+      return `
+        <div class="entry-card" onclick="loadEntryContent(${index})">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="entry-date">${formattedDate}</div>
+            <div style="font-size: 18px;">
+              ${moodEmoji[entry.mood] || "🙂"}
+            </div>
+          </div>
+
+          <div class="entry-title">
+            ${displayText.substring(0, 50)}
+            ${displayText.length > 50 ? "..." : ""}
+          </div>
+
+          <div style="font-size: 11px; color: rgba(232,232,240,0.4); margin-top: 4px;">
+            ${emotions}
+          </div>
+
         </div>
-        <div class="entry-title">${entry.text.substring(0, 50)}${entry.text.length > 50 ? '...' : ''}</div>
-        <div style="font-size: 11px; color: rgba(232,232,240,0.4); margin-top: 4px;">
-          ${entry.emotions.slice(0, 3).map(e => e.charAt(0).toUpperCase() + e.slice(1)).join(', ')}
-        </div>
+      `;
+    }).join("");
+
+    // Store globally for click handling
+    window.currentEntries = entries;
+
+    console.log("✅ Entries rendered successfully");
+
+  } catch (error) {
+    console.error("❌ Error loading entries:", error);
+
+    entriesContainer.innerHTML = `
+      <div style="
+        text-align: center;
+        padding: 40px 20px;
+        color: rgba(255,107,107,0.7);
+        font-size: 14px;
+      ">
+        Failed to load entries 😕
       </div>
     `;
-  }).join('');
-  
-  // Store entries globally for viewing
-  window.currentEntries = entries;
+  }
 }
-
 function loadEntryContent(index) {
   if (!window.currentEntries) return;
   
@@ -316,9 +345,6 @@ function loadEntryContent(index) {
   }
 }
 
-// ============================================
-// DASHBOARD FUNCTIONS
-// ============================================
 
 async function loadDashboard() {
   const stats = await getDashboardStats();
@@ -350,9 +376,7 @@ function updateDashboardStats(stats) {
   }
 }
 
-// ============================================
-// WORD COUNT UTILITY
-// ============================================
+
 
 function updateWordCount() {
   const bodyInput = document.getElementById("entryBody");
@@ -366,9 +390,7 @@ function updateWordCount() {
   wordCountEl.textContent = words + " words";
 }
 
-// ============================================
-// NEW ENTRY (Original from script.js)
-// ============================================
+
 
 function newEntry() {
   const titleInput = document.getElementById("entryTitle");
@@ -403,10 +425,7 @@ function newEntry() {
   console.log("New journal entry started");
 }
 
-// ============================================
-// GROUNDING EXERCISES (Original from script.js)
-// Used in resources.html
-// ============================================
+
 
 function startExercise(type) {
   const exercises = {
@@ -482,9 +501,7 @@ function startExercise(type) {
   }, 1000);
 }
 
-// ============================================
-// UPDATE USERNAME IN UI
-// ============================================
+
 
 function updateUsernameInUI() {
   const username = getUsername();
@@ -500,9 +517,7 @@ function updateUsernameInUI() {
   });
 }
 
-// ============================================
-// INITIALIZE ON PAGE LOAD
-// ============================================
+
 
 document.addEventListener("DOMContentLoaded", () => {
   // Update username in UI
