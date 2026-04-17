@@ -333,12 +333,13 @@ function loadEntryContent(index) {
     });
     
     if (editorDate) editorDate.textContent = formattedDate;
-    titleInput.value = entry.text.substring(0, 100);
-    bodyInput.value = entry.text;
+    // titleInput.value = entry.text.substring(0, 100);
+    // bodyInput.value = entry.text;
+    titleInput.value = entry.title || "";
+    bodyInput.value = entry.text || "";
     
     updateWordCount();
     
-    // Highlight selected entry
     document.querySelectorAll(".entry-card").forEach((card, i) => {
       card.classList.toggle("active", i === index);
     });

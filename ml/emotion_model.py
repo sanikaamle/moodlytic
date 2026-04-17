@@ -21,7 +21,7 @@ def predict_emotions(text):
     ]
 
 if __name__ == "__main__":
-    text = sys.argv[1]  # input from Node
+    text = sys.argv[1]  
 
     emotions = predict_emotions(text)
 

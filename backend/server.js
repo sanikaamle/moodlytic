@@ -12,12 +12,11 @@ mongoose.connect("mongodb://127.0.0.1:27017/moodlytic")
 .catch(err => console.log(err));
 
 
-// FIXED SCHEMA - Added title field
 const userSchema = new mongoose.Schema({
   username: String,
   entries: [
     {
-      title: String,  // ✅ ADDED
+      title: String, 
       text: String,
       mood: String,
       emotions: [String],
@@ -43,7 +42,6 @@ app.post("/ai-chat", (req, res) => {
 
 const { exec } = require("child_process");
 
-// FIXED ANALYZE ENDPOINT - Now accepts title
 app.post("/analyze", async (req, res) => {
   const { text, title, username } = req.body;  // ✅ ADDED title
 
@@ -78,7 +76,6 @@ app.post("/analyze", async (req, res) => {
       user = new User({ username, entries: [] });
     }
 
-    // ✅ FIXED - Now saves title too
     user.entries.push({
       title: title || "Untitled Entry",  // Use title or default
       text,
@@ -127,7 +124,7 @@ function calculateStreak(entries) {
 
   let streak = 0;
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Reset to start of day
+  today.setHours(0, 0, 0, 0); 
 
   // Check each consecutive day
   for (let i = 0; i < sortedEntries.length; i++) {
@@ -145,7 +142,6 @@ function calculateStreak(entries) {
       // Gap in streak
       break;
     }
-    // Skip duplicate entries on same day
   }
 
   return streak;
